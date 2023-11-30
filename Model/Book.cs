@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace SuryoyoBibliotek.Model
     internal class Book
     {
         public Guid BookID { get; set; }
+
+        [MaxLength(30)]
         public string BookTitle { get; set; }
         public bool BorrowedBook { get; set; }
         public int RentalYear { get; set; }
