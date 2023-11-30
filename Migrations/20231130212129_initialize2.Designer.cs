@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SuryoyoBibliotek.Data;
 
@@ -11,9 +12,11 @@ using SuryoyoBibliotek.Data;
 namespace SuryoyoBibliotek.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20231130212129_initialize2")]
+    partial class initialize2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace SuryoyoBibliotek.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("AuthorBook", b =>
-                {
-                    b.Property<int>("AuthorsAuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("BooksBookID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("AuthorsAuthorId", "BooksBookID");
-
-                    b.HasIndex("BooksBookID");
-
-                    b.ToTable("AuthorBook");
-                });
 
             modelBuilder.Entity("SuryoyoBibliotek.Model.Author", b =>
                 {
@@ -118,21 +106,6 @@ namespace SuryoyoBibliotek.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("AuthorBook", b =>
-                {
-                    b.HasOne("SuryoyoBibliotek.Model.Author", null)
-                        .WithMany()
-                        .HasForeignKey("AuthorsAuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SuryoyoBibliotek.Model.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksBookID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("SuryoyoBibliotek.Model.Book", b =>

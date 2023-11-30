@@ -35,5 +35,10 @@ namespace SuryoyoBibliotek.Model
         {
             
         }
+
+        public int UserID { get; set; }
+        public User? Users { get; set; }
+
+        public ICollection<Author> Authors {  get; set; }
     }
 }

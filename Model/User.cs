@@ -24,5 +24,7 @@ namespace SuryoyoBibliotek.Model
         {
             
         }
+
+        public ICollection<Book> Books { get; set; }
     }
 }
