@@ -12,8 +12,8 @@ using SuryoyoBibliotek.Data;
 namespace SuryoyoBibliotek.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231130213724_intialize3")]
-    partial class intialize3
+    [Migration("20231205124926_intialize4")]
+    partial class intialize4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,8 +30,8 @@ namespace SuryoyoBibliotek.Migrations
                     b.Property<int>("AuthorsAuthorId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("BooksBookID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("BooksBookID")
+                        .HasColumnType("int");
 
                     b.HasKey("AuthorsAuthorId", "BooksBookID");
 
@@ -60,38 +60,61 @@ namespace SuryoyoBibliotek.Migrations
 
             modelBuilder.Entity("SuryoyoBibliotek.Model.Book", b =>
                 {
-                    b.Property<Guid>("BookID")
+                    b.Property<int>("BookID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("BookGrade")
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookID"));
+
                     b.Property<string>("BookTitle")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<bool>("BorrowedBook")
-                        .HasColumnType("bit");
+                    b.Property<int>("Grade")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("RentalDate")
+                    b.Property<Guid>("Isbn")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("LoanCardId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LoanDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RentalYear")
+                    b.Property<bool>("Loaned")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("RentalCardsRentalCardId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RentalYear")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ReturnDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("int");
-
                     b.HasKey("BookID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("RentalCardsRentalCardId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("SuryoyoBibliotek.Model.RentalCard", b =>
+                {
+                    b.Property<int>("RentalCardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentalCardId"));
+
+                    b.Property<int>("RentalCardPin")
+                        .HasColumnType("int");
+
+                    b.HasKey("RentalCardId");
+
+                    b.ToTable("RentedCards");
                 });
 
             modelBuilder.Entity("SuryoyoBibliotek.Model.User", b =>
@@ -103,22 +126,19 @@ namespace SuryoyoBibliotek.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<bool>("LibraryCard")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LibraryCardPin")
+                    b.Property<int?>("RentalCardId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RentalCardId");
 
                     b.ToTable("Users");
                 });
@@ -140,16 +160,23 @@ namespace SuryoyoBibliotek.Migrations
 
             modelBuilder.Entity("SuryoyoBibliotek.Model.Book", b =>
                 {
-                    b.HasOne("SuryoyoBibliotek.Model.User", "Users")
+                    b.HasOne("SuryoyoBibliotek.Model.RentalCard", "RentalCards")
                         .WithMany("Books")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RentalCardsRentalCardId");
 
-                    b.Navigation("Users");
+                    b.Navigation("RentalCards");
                 });
 
             modelBuilder.Entity("SuryoyoBibliotek.Model.User", b =>
+                {
+                    b.HasOne("SuryoyoBibliotek.Model.RentalCard", "RentalCard")
+                        .WithMany()
+                        .HasForeignKey("RentalCardId");
+
+                    b.Navigation("RentalCard");
+                });
+
+            modelBuilder.Entity("SuryoyoBibliotek.Model.RentalCard", b =>
                 {
                     b.Navigation("Books");
                 });

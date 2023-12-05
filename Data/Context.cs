@@ -23,17 +23,5 @@ namespace SuryoyoBibliotek.Data
                 "Trusted_Connection=True; Trust Server Certificate =Yes; " +
                 "User Id=NewtonLibrary password=NewtonLibrary");
         }
-
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Book>(entity =>
-            {
-                entity.Property(b => b.Loaned) //b = book
-                      .HasColumnName("Loaned")
-                      .HasColumnType("book");
-            });
-        }
-
     }
 }

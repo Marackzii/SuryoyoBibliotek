@@ -16,7 +16,7 @@ namespace SuryoyoBibliotek.Data
         {
             [Description("The Godfather")] Godfather, [Description("Lord of the rings")] Lotr, [Description("The Dark Knight")] TDK,
             [Description("Game Of Thrones")] GOT, [Description("House of the Dragon")] HotD, [Description("Avengers")] MCU,
-            [Description("The Revenant")] Revenant, [Description("Harry Potter")] HarryPotter, [Description("Percy Jackson")] PJ, [Description("Dune")] Dune, [Description("The Hobbit")] Hobbit,
+            [Description("The Revenant")] Revenant, [Description("Harry Potter")] HarryPotter, [Description("Percy Jackson")] PJ, [Description("The Green Mile")] GreenMile, [Description("The Hobbit")] Hobbit,
             [Description("The Mist")] Mist, [Description("SpiderWick")] Spiderwick, [Description("The Hunger Games")] THG, [Description("The Chronicles of Narnia")] Narnia, [Description("The Twilight Series")] Twilight,
         }
 
