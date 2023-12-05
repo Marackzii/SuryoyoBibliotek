@@ -9,24 +9,82 @@ namespace SuryoyoBibliotek.Model
 {
     internal class Book
     {
-        public Guid BookID { get; set; }
+        public int BookID { get; set; }
 
         [MaxLength(30)]
-        public string BookTitle { get; set; }
-        public bool BorrowedBook { get; set; }
-        public int RentalYear { get; set; }
-        public DateTime? RentalDate { get; set; }
-        public DateTime? ReturnDate { get; set; }
+        public string? BookTitle { get; set; }
+        public int? RentalYear { get; set; }
+        public int Grade { get; set; } = new Random().Next(1, 5);
+        public Guid Isbn { get; set; } = Guid.NewGuid();
+        public DateTime? ReturnDate { get; private set; }
 
-        private int restrictedGrades;
 
-        public int BookGrade
+
+        private bool _loaned;
+
+        public bool Loaned
         {
-            get => restrictedGrades;
+            get => LoanCardId.HasValue;
             set
             {
-                if (value < 1 || value > 5) throw new ArgumentOutOfRangeException(nameof(value));
-                restrictedGrades = value;
+                if (value && !_loanDate.HasValue)
+                {
+                    _loanDate = DateTime.Now;
+                    ReturnDate = _loanDate?.AddDays(14);
+                }
+                else if (!value)
+                {
+                    _loanDate = null;
+                    ReturnDate = null;
+                }
+            }
+        }
+
+
+        private DateTime? _loanDate;
+
+        public DateTime? LoanDate
+        {
+            get => _loanDate;
+            set
+            {
+                _loanDate = value;
+
+                if (Loaned && _loanDate == null)
+                {
+                    // Book is still loaned, update _loanDate and ReturnDate
+                    _loanDate = DateTime.Now;
+                    ReturnDate = _loanDate?.AddDays(14);
+                }
+                else if (!Loaned)
+                {
+                    // Book is not loaned, reset _loanDate and ReturnDate
+                    _loanDate = null;
+                    ReturnDate = null;
+                }
+            }
+        }
+
+
+        private int? _loanCardId;
+        public int? LoanCardId
+        {
+            get => _loanCardId;
+            set
+            {
+                _loanCardId = value;
+
+                if (value == null)
+                {
+                    _loanDate = null;
+                    ReturnDate = null;
+                }
+                else if (Loaned)
+                {
+                    // Update LoanDate and ReturnDate when LoanCardId changes and the book is loaned
+                    _loanDate = DateTime.Now;
+                    ReturnDate = _loanDate?.AddDays(14);
+                }
             }
         }
 
@@ -36,9 +94,10 @@ namespace SuryoyoBibliotek.Model
             
         }
 
-        public int UserID { get; set; }
-        public User? Users { get; set; }
 
-        public ICollection<Author> Authors {  get; set; }
+        public RentalCard? RentalCards { get; set; }
+
+
+        public ICollection<Author>? Authors {  get; set; }
     }
 }

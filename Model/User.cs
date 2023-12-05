@@ -12,12 +12,13 @@ namespace SuryoyoBibliotek.Model
         public int Id { get; set; }
 
         [MaxLength(30)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [MaxLength(30)]
-        public string LastName { get; set; }
-        public bool LibraryCard { get; set; }
-        public int LibraryCardPin { get; set; } = new Random().Next(1000, 9999);
+        public string? LastName { get; set; }
+
+
+        public RentalCard? RentalCard { get; set; }
 
 
         public User()
@@ -25,6 +26,5 @@ namespace SuryoyoBibliotek.Model
             
         }
 
-        public ICollection<Book> Books { get; set; }
     }
 }
