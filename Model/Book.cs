@@ -20,69 +20,65 @@ namespace SuryoyoBibliotek.Model
 
 
 
-        private bool _borrowed; //_loaned
-
-        public bool Loaned //Borrowed
+        public bool Borrowed //Loaned
         {
-            get => LoanCardId.HasValue;
+            get => RentCardId.HasValue;
             set
             {
-                if (value && !_loanDate.HasValue)
+                if (value && !hire_Date.HasValue)
                 {
-                    _loanDate = DateTime.Now;
-                    ReturnDate = _loanDate?.AddDays(10);
+                    hire_Date = DateTime.Now;
+                    ReturnDate = hire_Date?.AddDays(10);
                 }
                 else if (!value)
                 {
-                    _loanDate = null;
+                    hire_Date = null;
                     ReturnDate = null;
                 }
             }
         }
 
 
-        private DateTime? _loanDate;
+        private DateTime? hire_Date;
 
-        public DateTime? LoanDate
+        public DateTime? HireDate
         {
-            get => _loanDate;
+            get => hire_Date;
             set
             {
-                _loanDate = value;
+                hire_Date = value;
 
-                if (Loaned && _loanDate == null)
+                if (Borrowed && hire_Date == null)
                 {
-                    // Book is still loaned, update _loanDate and ReturnDate
-                    _loanDate = DateTime.Now;
-                    ReturnDate = _loanDate?.AddDays(10);
+                    hire_Date = DateTime.Now;
+                    ReturnDate = hire_Date?.AddDays(10);
                 }
-                else if (!Loaned)
+                else if (!Borrowed)
                 {
-                    // Book is not loaned, reset _loanDate and ReturnDate
-                    _loanDate = null;
+                    hire_Date = null;
                     ReturnDate = null;
                 }
             }
         }
 
 
-        private int? _loanCardId; //rent_CardId;
-        public int? LoanCardId //RentCardId 
+        private int? rent_CardId; //_loanCardId;
+        public int? RentCardId //LoanCardId 
         {
-            get => _loanCardId;
+            get => rent_CardId;
             set
             {
-                _loanCardId = value;
+                rent_CardId = value;
 
                 if (value == null)
                 {
-                    _loanDate = null;
+                    hire_Date = null;
                     ReturnDate = null;
                 }
-                else if (Loaned)
+                else if (Borrowed)
                 {
-                    _loanDate = DateTime.Now;
-                    ReturnDate = _loanDate?.AddDays(10);
+                    hire_Date = DateTime.Now;
+                    ReturnDate = hire_Date?.AddDays(10);
                 }
             }
         }
@@ -93,9 +89,7 @@ namespace SuryoyoBibliotek.Model
             
         }
 
-
         public RentalCard? RentalCards { get; set; }
-
 
         public ICollection<Author>? Authors {  get; set; }
     }

@@ -58,7 +58,7 @@ namespace SuryoyoBibliotek.Data
             }
 
 
-            public void MarkBookAsNotLoaned(int bookId)
+            public void MarkBookAsNotRented(int bookId)
             {
                 using (var context = new Context())
                 {
@@ -66,47 +66,44 @@ namespace SuryoyoBibliotek.Data
 
                     if (book != null)
                     {
-                        // Update LoanCardId to null, marking the book as not loaned
-                        book.LoanCardId = null;
+                        book.RentCardId = null;
 
-                        // If the book was associated with a LoanCard, remove it from the LoanCard's collection
                         if (book.RentalCards != null)
                         {
                             book.RentalCards.Books.Remove(book);
                         }
 
-                        // Save changes to the database
                         context.SaveChanges();
                     }
                 }
             }
 
 
-            public void AddPersonToDatabase(string firstName, string lastName)
+            public void AddUserToDatabase(string firstName, string lastName)
             {
                 using (var context = new Context())
                 {
-                    var person = new User
+                    var user2 = new User
                     {
                         FirstName = firstName,
                         LastName = lastName
                     };
 
-                    context.Users.Add(person);
+                    context.Users.Add(user2);
                     context.SaveChanges();
                 }
             }
 
-            public void AddBookToDatabase(string title, params int[] autorIds)
+            public void AddBookToDatabase(string title, params int[] authorIds)
             {
                 using (var context = new Context())
                 {
-                    var autors = context.Authors.Where(a => autorIds.Contains(a.AuthorId)).ToList();
+                    var authors = context.Authors.Where(a => authorIds.Contains(a.AuthorId)).ToList();
 
                     var book = new Book
                     {
                         BookTitle = title,
-                        Authors = autors,
+                        Authors = authors,
                         RentalYear = new Random().Next(1900, 2023)
 
                     };
@@ -122,58 +119,43 @@ namespace SuryoyoBibliotek.Data
             {
                 using (var context = new Context())
                 {
-                    // Step 1: Retrieve the Person
                     var person = context.Users.FirstOrDefault(user =>  user.Id == id);
 
                     if (person == null)
                     {
-                        // Handle the case where the person with the specified ID doesn't exist
-                        // You can throw an exception, log a message, or take appropriate action
                         return;
                     }
 
-                    // Step 2: Create a new LoanCard
                     var loanCard = new RentalCard();
 
-                    // Step 3: Link the LoanCard to the Person
                     person.RentalCard = loanCard;
 
-                    // Step 4: Save changes to the database
                     context.SaveChanges();
                 }
             }
 
-            public void AddBookIdToPersonLoanCard(int personId, int bookId)
+            public void AddBookIdToPersonLoanCard(int customerId, int bookId)
             {
                 using (var context = new Context())
                 {
-                    // Step 1: Retrieve the Person with LoanCard
-                    var person = context.Users.Include(p => p.RentalCard).SingleOrDefault(p => p.Id == personId);
+                    var person = context.Users.Include(p => p.RentalCard).SingleOrDefault(p => p.Id == customerId);
 
                     if (person == null)
                     {
-                        // Handle the case where the person with the specified ID doesn't exist
-                        // You can throw an exception, log a message, or take appropriate action
                         return;
                     }
 
-                    // Step 2: Check if the person has a LoanCard
                     if (person.RentalCard == null)
                     {
-                        // Handle the case where the person doesn't have a LoanCard
-                        // You can create a new LoanCard, associate it with the person, and proceed
                         return;
                     }
-
-                    // Step 3: Link the existing book to the LoanCard using the book ID
 
                     var book = context.Books.Find(bookId);
 
                     if (book != null)
                     {
-                        // Assuming LoanCardId is the foreign key in the Book entity
-                        book.LoanCardId = person.RentalCard.RentalCardId;
-                        context.SaveChanges(); // Save changes to the book
+                        book.RentCardId = person.RentalCard.RentalCardId;
+                        context.SaveChanges();
                     }
                 }
             }
@@ -183,17 +165,21 @@ namespace SuryoyoBibliotek.Data
             {
             using (var context = new Context())
                 {
-                    var allPersons = context.Users.ToList();
-                    context.Users.RemoveRange(allPersons);
+                    var allUsers = context.Users.ToList();
+                    context.Users.RemoveRange(allUsers);
                     var allBooks = context.Books.ToList();
                     context.Books.RemoveRange(allBooks);
-                    var allAutors = context.Authors.ToList();
-                    context.Authors.RemoveRange(allAutors);
-                    var allLoanC = context.RentedCards.ToList();
-                    context.RemoveRange(allLoanC);
+                    var allAuthors = context.Authors.ToList();
+                    context.Authors.RemoveRange(allAuthors);
+                    var allRentCards = context.RentedCards.ToList();
+                    context.RemoveRange(allRentCards);
                     context.SaveChanges();
 
                     context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Users', RESEED, 0)");
+                    context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Authors', RESEED, 0)");
+                    context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('RentedCards', RESEED, 0)");
+                    context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Books', RESEED, 0)");
+
             }
         }
 
@@ -237,14 +223,14 @@ namespace SuryoyoBibliotek.Data
                 {
                     var UsersRentalCard = RemoveUser.RentalCard.RentalCardId;
                     context.Users.Remove(RemoveUser);
-                    var usersBook = context.Books.SingleOrDefault(b=> b.LoanCardId == UsersRentalCard);
+                    var usersBook = context.Books.SingleOrDefault(b=> b.RentCardId == UsersRentalCard);
 
-                    if (UsersRentalCard != null)
+                    if (usersBook != null)
                     {
-                        usersBook.Loaned = false;
-                        usersBook.RentalCards = null;
+                        usersBook.Borrowed = false;
+                        usersBook.RentCardId = null;
                         usersBook.ReturnDate = null;
-                        usersBook.LoanDate = null;
+                        usersBook.HireDate = null;
                     }
                     else
                     {
