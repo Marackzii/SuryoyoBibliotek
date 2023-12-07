@@ -16,13 +16,13 @@ namespace SuryoyoBibliotek.Model
         public int? RentalYear { get; set; }
         public int Grade { get; set; } = new Random().Next(1, 5);
         public Guid Isbn { get; set; } = Guid.NewGuid();
-        public DateTime? ReturnDate { get; private set; }
+        public DateTime? ReturnDate { get; set; }
 
 
 
-        private bool _loaned;
+        private bool _borrowed; //_loaned
 
-        public bool Loaned
+        public bool Loaned //Borrowed
         {
             get => LoanCardId.HasValue;
             set
@@ -30,7 +30,7 @@ namespace SuryoyoBibliotek.Model
                 if (value && !_loanDate.HasValue)
                 {
                     _loanDate = DateTime.Now;
-                    ReturnDate = _loanDate?.AddDays(14);
+                    ReturnDate = _loanDate?.AddDays(10);
                 }
                 else if (!value)
                 {
@@ -54,7 +54,7 @@ namespace SuryoyoBibliotek.Model
                 {
                     // Book is still loaned, update _loanDate and ReturnDate
                     _loanDate = DateTime.Now;
-                    ReturnDate = _loanDate?.AddDays(14);
+                    ReturnDate = _loanDate?.AddDays(10);
                 }
                 else if (!Loaned)
                 {
@@ -66,8 +66,8 @@ namespace SuryoyoBibliotek.Model
         }
 
 
-        private int? _loanCardId;
-        public int? LoanCardId
+        private int? _loanCardId; //rent_CardId;
+        public int? LoanCardId //RentCardId 
         {
             get => _loanCardId;
             set
@@ -81,9 +81,8 @@ namespace SuryoyoBibliotek.Model
                 }
                 else if (Loaned)
                 {
-                    // Update LoanDate and ReturnDate when LoanCardId changes and the book is loaned
                     _loanDate = DateTime.Now;
-                    ReturnDate = _loanDate?.AddDays(14);
+                    ReturnDate = _loanDate?.AddDays(10);
                 }
             }
         }

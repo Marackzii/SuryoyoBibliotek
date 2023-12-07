@@ -8,7 +8,7 @@ namespace SuryoyoBibliotek
         {
             DataAccess data = new DataAccess();
 
-            //data.CreateFiller(); // Creates 10 random of everything
+            //data.CreateFiller(); // Creates 10 random books of random titles
             //data.Clear(); // Clears everything
             //data.AddLoanCardToPerson(1); // Adds a card to the user, as for now to user 1
             //data.AddBookIdToPersonLoanCard(1, 5); // The user with id number 1 gets the book with bookid 5

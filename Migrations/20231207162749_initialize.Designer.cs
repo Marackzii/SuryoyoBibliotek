@@ -12,8 +12,8 @@ using SuryoyoBibliotek.Data;
 namespace SuryoyoBibliotek.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231205124926_intialize4")]
-    partial class intialize4
+    [Migration("20231207162749_initialize")]
+    partial class initialize
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -16,12 +16,14 @@ namespace SuryoyoBibliotek.Data
         {
             [Description("The Godfather")] Godfather, [Description("Lord of the rings")] Lotr, [Description("The Dark Knight")] TDK,
             [Description("Game Of Thrones")] GOT, [Description("House of the Dragon")] HotD, [Description("Avengers")] MCU,
-            [Description("The Revenant")] Revenant, [Description("Harry Potter")] HarryPotter, [Description("Percy Jackson")] PJ, [Description("The Green Mile")] GreenMile, [Description("The Hobbit")] Hobbit,
-            [Description("The Mist")] Mist, [Description("SpiderWick")] Spiderwick, [Description("The Hunger Games")] THG, [Description("The Chronicles of Narnia")] Narnia, [Description("The Twilight Series")] Twilight,
+            [Description("The Revenant")] Revenant, [Description("Harry Potter")] HarryPotter, [Description("Percy Jackson")] PJ, 
+            [Description("The Green Mile")] GreenMile, [Description("The Hobbit")] Hobbit, [Description("The Mist")] Mist, 
+            [Description("The Chronicles of Spiderwick")] Spiderwick, [Description("The Hunger Games")] THG, 
+            [Description("The Chronicles of Narnia")] Narnia, [Description("The Twilight Series")] Twilight,
         }
 
 
-        internal csSeedGenerator rnd = new csSeedGenerator();
+        internal csSeedGenerator rngGenerator = new csSeedGenerator();
 
             public void CreateFiller()
             {
@@ -31,22 +33,22 @@ namespace SuryoyoBibliotek.Data
                     {
                         User user = new User();
 
-                        user.FirstName = rnd.FirstName;
-                        user.LastName = rnd.LastName;
+                        user.FirstName = rngGenerator.FirstName;
+                        user.LastName = rngGenerator.LastName;
 
                         Book book = new Book();
-                        book.RentalYear = rnd.Next(1900, 2023);
-                        book.BookTitle = GetEnumDescription(rnd.FromEnum<BookTitles>());
-                        RentalCard loanCard = new RentalCard();
+                        book.RentalYear = rngGenerator.Next(1950, 2023);
+                        book.BookTitle = GetEnumDescription(rngGenerator.FromEnum<BookTitles>());
+                        RentalCard rentCard = new RentalCard();
 
-                        Author autor = new Author();
+                        Author author1 = new Author();
 
-                        autor.Name = rnd.FullName;
+                        author1.Name = rngGenerator.FullName;
 
                         context.Users.Add(user);
                         context.Books.Add(book);
-                        context.Authors.Add(autor);
-                        context.RentedCards.Add(loanCard);
+                        context.Authors.Add(author1);
+                        context.RentedCards.Add(rentCard);
 
 
                     }
@@ -121,7 +123,7 @@ namespace SuryoyoBibliotek.Data
                 using (var context = new Context())
                 {
                     // Step 1: Retrieve the Person
-                    var person = context.Users.Find(id);
+                    var person = context.Users.FirstOrDefault(user =>  user.Id == id);
 
                     if (person == null)
                     {
@@ -179,7 +181,7 @@ namespace SuryoyoBibliotek.Data
 
             public void Clear()
             {
-                using (var context = new Context())
+            using (var context = new Context())
                 {
                     var allPersons = context.Users.ToList();
                     context.Users.RemoveRange(allPersons);
@@ -190,8 +192,10 @@ namespace SuryoyoBibliotek.Data
                     var allLoanC = context.RentedCards.ToList();
                     context.RemoveRange(allLoanC);
                     context.SaveChanges();
-                }
+
+                    context.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Users', RESEED, 0)");
             }
+        }
 
             private string GetEnumDescription(Enum value)
             {
@@ -205,5 +209,69 @@ namespace SuryoyoBibliotek.Data
                 return value.ToString();
             }
 
+
+        public void RemoveBookFromDatabase(int Book_ID)
+        {
+            using(var context = new Context())
+            {
+                var RemoveBook = context.Books.SingleOrDefault(b=> b.BookID == Book_ID);
+                if (RemoveBook != null)
+                {
+                    context.Books.Remove(RemoveBook);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    Console.WriteLine("There is no book with this book id!");
+                }
+            }
         }
+
+
+        public void RemoveUserFromDatabase(int user_id)
+        {
+            using(var context = new Context())
+            {
+                var RemoveUser = context.Users.Include(u=> u.RentalCard).SingleOrDefault(u=> u.Id == user_id);
+                if (RemoveUser != null)
+                {
+                    var UsersRentalCard = RemoveUser.RentalCard.RentalCardId;
+                    context.Users.Remove(RemoveUser);
+                    var usersBook = context.Books.SingleOrDefault(b=> b.LoanCardId == UsersRentalCard);
+
+                    if (UsersRentalCard != null)
+                    {
+                        usersBook.Loaned = false;
+                        usersBook.RentalCards = null;
+                        usersBook.ReturnDate = null;
+                        usersBook.LoanDate = null;
+                    }
+                    else
+                    {
+                        Console.WriteLine("There is no book with this id!");
+                    }
+                }
+                context.SaveChanges();
+            }
+        }
+
+
+        public void RemoveAuthorFromDatabase(int author_id)
+        {
+            using (var context = new Context())
+            {
+                var removeAuthor = context.Authors.SingleOrDefault(a => a.AuthorId == author_id);
+                if (removeAuthor != null)
+                {
+                    context.Authors.Remove(removeAuthor);
+                }
+                else
+                {
+                    Console.WriteLine("There is no book with this id!");
+                }
+                context.SaveChanges();
+            }
+        }
+        
+    }
 }
