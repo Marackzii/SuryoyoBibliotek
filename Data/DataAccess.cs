@@ -25,7 +25,7 @@ namespace SuryoyoBibliotek.Data
 
         internal csSeedGenerator rngGenerator = new csSeedGenerator();
 
-            public void CreateFiller()
+            public void CreateOfEverything()
             {
                 using (var context = new Context())
                 {

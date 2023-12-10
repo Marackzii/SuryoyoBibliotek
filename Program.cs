@@ -11,7 +11,7 @@ namespace SuryoyoBibliotek
             Context context2 = new Context();
             Context context3 = new Context();
 
-            //data.CreateFiller();     // Creates 10 random of everything
+            data.CreateOfEverything();     // Creates 10 random of everything
             //data.Clear();
             //data.AddRentCardToUser(2);    // Adds a card to the user, as for now to user 1
             //data.AddBookIdToPersonRentCard(2, 10);    // The user with id number x gets the book with bookid x
