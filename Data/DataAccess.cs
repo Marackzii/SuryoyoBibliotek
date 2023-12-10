@@ -79,6 +79,7 @@ namespace SuryoyoBibliotek.Data
             }
 
 
+
             public void AddUserToDatabase(string firstName, string lastName)
             {
                 using (var context = new Context())
@@ -113,9 +114,25 @@ namespace SuryoyoBibliotek.Data
                 }
             }
 
+            public void AddAuthorToDatabase()
+            {
+                csSeedGenerator rngGenerator2 = new csSeedGenerator();
+
+                using (var context = new Context())
+                {
+                var author2 = new Author
+                {
+                    Name = rngGenerator2.FullName
+
+                };
+                    context.Authors.Add(author2);
+                    context.SaveChanges();
+                }
+            }
 
 
-            public void AddLoanCardToPerson(int id)
+
+            public void AddRentCardToUser(int id)
             {
                 using (var context = new Context())
                 {
@@ -134,7 +151,7 @@ namespace SuryoyoBibliotek.Data
                 }
             }
 
-            public void AddBookIdToPersonLoanCard(int customerId, int bookId)
+            public void AddBookIdToPersonRentCard(int customerId, int bookId)
             {
                 using (var context = new Context())
                 {
@@ -183,6 +200,7 @@ namespace SuryoyoBibliotek.Data
             }
         }
 
+
             private string GetEnumDescription(Enum value)
             {
                 var field = value.GetType().GetField(value.ToString());
@@ -196,7 +214,7 @@ namespace SuryoyoBibliotek.Data
             }
 
 
-        public void RemoveBookFromDatabase(int Book_ID)
+            public void RemoveBookFromDatabase(int Book_ID)
         {
             using(var context = new Context())
             {
@@ -214,7 +232,7 @@ namespace SuryoyoBibliotek.Data
         }
 
 
-        public void RemoveUserFromDatabase(int user_id)
+            public void RemoveUserFromDatabase(int user_id)
         {
             using(var context = new Context())
             {
@@ -242,7 +260,7 @@ namespace SuryoyoBibliotek.Data
         }
 
 
-        public void RemoveAuthorFromDatabase(int author_id)
+            public void RemoveAuthorFromDatabase(int author_id)
         {
             using (var context = new Context())
             {

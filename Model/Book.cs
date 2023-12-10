@@ -20,7 +20,7 @@ namespace SuryoyoBibliotek.Model
 
 
 
-        public bool Borrowed //Loaned
+        public bool Borrowed
         {
             get => RentCardId.HasValue;
             set
@@ -62,8 +62,8 @@ namespace SuryoyoBibliotek.Model
         }
 
 
-        private int? rent_CardId; //_loanCardId;
-        public int? RentCardId //LoanCardId 
+        private int? rent_CardId;
+        public int? RentCardId 
         {
             get => rent_CardId;
             set
